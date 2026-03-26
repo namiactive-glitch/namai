@@ -9,9 +9,15 @@ export const getValidKey = (providedKeys?: string): string => {
   } else {
     // 2. Check if the user has set their own API key in localStorage
     try {
-      const userKey = localStorage.getItem('user_gemini_api_key');
-      if (userKey && userKey.trim()) {
-        key = userKey.trim();
+      const userKeys = localStorage.getItem('user_gemini_api_keys');
+      if (userKeys) {
+        const keys = userKeys.split('\n').map(k => k.trim()).filter(k => k !== '');
+        if (keys.length > 0) key = keys[0];
+      } else {
+        const userKey = localStorage.getItem('user_gemini_api_key');
+        if (userKey && userKey.trim()) {
+          key = userKey.trim();
+        }
       }
     } catch (e) {
       // localStorage might not be available in some contexts
@@ -30,6 +36,20 @@ export const getValidKey = (providedKeys?: string): string => {
 
   // Clean the key: remove any non-ASCII characters and trim
   return key.replace(/[^\x00-\x7F]/g, "").trim();
+};
+
+export const getAllValidKeys = (): string[] => {
+  try {
+    const userKeys = localStorage.getItem('user_gemini_api_keys');
+    if (userKeys) {
+      return userKeys.split('\n').map(k => k.trim()).filter(k => k !== '');
+    }
+    const userKey = localStorage.getItem('user_gemini_api_key');
+    if (userKey && userKey.trim()) {
+      return [userKey.trim()];
+    }
+  } catch (e) {}
+  return [];
 };
 
 export const getAiClient = (apiKey?: string) => {

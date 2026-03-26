@@ -128,11 +128,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                   value={geminiKey}
                   onChange={(e) => setGeminiKey(e.target.value)}
                   className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition-all font-medium"
-                  placeholder="Nhập API Key của bạn (Tùy chọn)..."
+                  placeholder="Nhập API Key của bạn..."
+                  required
                 />
               </div>
               <p className="text-[10px] text-slate-400 ml-1 leading-relaxed">
-                * Nếu nhập, hệ thống sẽ dùng Key này làm mặc định cho mọi tính năng.
+                * Bắt buộc: Hệ thống sẽ dùng Key này cho mọi tính năng.
               </p>
             </div>
 

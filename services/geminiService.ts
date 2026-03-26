@@ -1,20 +1,18 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { Character, GeneratedData, ScriptTone, ImageAsset, InteractionMode } from "../types";
-import { getValidKey, markKeyAsFailed } from "./keyService";
+import { getAllValidKeys, markKeyAsFailed, getAiClient } from "./keyService";
 
 const getAI = (apiKey?: string) => {
-  const key = getValidKey(apiKey);
-  return new GoogleGenAI({ apiKey: key });
+  return getAiClient(apiKey);
 };
-
 export const withRetry = async <T>(fn: (ai: any) => Promise<T>, apiKey?: string, maxRetries = 3): Promise<T> => {
   let lastError: any;
-  const keys = apiKey ? apiKey.split('\n').map(k => k.trim()).filter(k => k !== '') : [];
+  const keys = apiKey ? [apiKey] : getAllValidKeys();
   const retryLimit = Math.max(maxRetries, keys.length);
 
   for (let i = 0; i < retryLimit; i++) {
-    const ai = getAI(apiKey);
-    const currentKey = getValidKey(apiKey);
+    const currentKey = i < keys.length ? keys[i] : keys[keys.length - 1];
+    const ai = getAI(currentKey);
     try {
       return await fn(ai);
     } catch (error: any) {
